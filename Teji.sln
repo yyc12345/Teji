@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.10
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TejiServer", "TejiServer\TejiServer.csproj", "{B00AE3A8-3BEC-4BB0-ABD5-B66FF31B0D19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TejiLib", "TejiLib\TejiLib.csproj", "{42E7E53F-C6A1-4888-8ABA-5A14FC534EE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TejiClient", "TejiClient\TejiClient.csproj", "{423426E4-7464-4322-90B8-23F6FF25700D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TejiConsole", "TejiConsole\TejiConsole.csproj", "{A6AE7A21-0363-4739-BD0E-CA2E1EB667CF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B00AE3A8-3BEC-4BB0-ABD5-B66FF31B0D19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B00AE3A8-3BEC-4BB0-ABD5-B66FF31B0D19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B00AE3A8-3BEC-4BB0-ABD5-B66FF31B0D19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B00AE3A8-3BEC-4BB0-ABD5-B66FF31B0D19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42E7E53F-C6A1-4888-8ABA-5A14FC534EE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42E7E53F-C6A1-4888-8ABA-5A14FC534EE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42E7E53F-C6A1-4888-8ABA-5A14FC534EE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42E7E53F-C6A1-4888-8ABA-5A14FC534EE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{423426E4-7464-4322-90B8-23F6FF25700D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{423426E4-7464-4322-90B8-23F6FF25700D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{423426E4-7464-4322-90B8-23F6FF25700D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{423426E4-7464-4322-90B8-23F6FF25700D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6AE7A21-0363-4739-BD0E-CA2E1EB667CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6AE7A21-0363-4739-BD0E-CA2E1EB667CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6AE7A21-0363-4739-BD0E-CA2E1EB667CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6AE7A21-0363-4739-BD0E-CA2E1EB667CF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4E3B2FE8-A8F9-4B0D-8BD3-A00E520B16F5}
+	EndGlobalSection
+EndGlobal
