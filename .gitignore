@@ -8,6 +8,8 @@ Desktop.ini
 
 *.dat
 
+#ignore app's config
+teji.cfg
 
 ## ------------------------Visual Studio normal settings---------------------------------------
 

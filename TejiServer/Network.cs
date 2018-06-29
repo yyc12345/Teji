@@ -40,22 +40,18 @@ namespace TejiServer {
             socket4 = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
 
-            //var endPoint4 = new IPEndPoint(IPAddress.Any, int.Parse(General.serverConfig["ipv4Port"]));
-            //var endPoint6 = new IPEndPoint(IPAddress.IPv6Any, int.Parse(General.serverConfig["ipv6Port"]));
-            var endPoint4 = new IPEndPoint(IPAddress.Any, 8181);
-            var endPoint6 = new IPEndPoint(IPAddress.IPv6Any, 6161);
+            var endPoint4 = new IPEndPoint(IPAddress.Any, int.Parse(General.serverConfig["ipv4Port"]));
+            var endPoint6 = new IPEndPoint(IPAddress.IPv6Any, int.Parse(General.serverConfig["ipv6Port"]));
 
             socket4.Bind(endPoint4);
             socket6.Bind(endPoint6);
 
             socket4.Listen(5);
             GetCaller(socket4);
-            //ConsoleAssistance.WriteLine($"[Socket] Listening on port {General.serverConfig["ipv4Port"]} for ipv4 connection.");
-            ConsoleAssistance.WriteLine($"[Socket] Listening on port 8181 for ipv4 connection.");
+            ConsoleAssistance.WriteLine($"[Socket] Listening on port {General.serverConfig["ipv4Port"]} for ipv4 connection.");
             socket6.Listen(5);
             GetCaller(socket6);
-            //ConsoleAssistance.WriteLine($"[Socket] Listening on port {General.serverConfig["ipv6Port"]} for ipv6 connection.");
-            ConsoleAssistance.WriteLine($"[Socket] Listening on port 6161 for ipv6 connection.");
+            ConsoleAssistance.WriteLine($"[Socket] Listening on port {General.serverConfig["ipv6Port"]} for ipv6 connection.");
 
             isListening = true;
         }
