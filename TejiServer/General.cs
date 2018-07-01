@@ -8,7 +8,7 @@ namespace TejiServer {
 
         public static ConfigManager serverConfig;
 
-        //public static ServerDatabase serverDatabase;
+        public static Database serverDatabase;
 
         public static Network serverNetwork;
 

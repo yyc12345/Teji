@@ -40,16 +40,16 @@ namespace TejiClient {
                     if (isIpv6) con = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
                     else con = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-                    ConsoleAssistance.WriteLine($"[Socket] Connecting {ip}:{port.ToString()}", ConsoleColor.Yellow);
+                    ConsoleAssistance.WriteLine($"[Network] Connecting {ip}:{port.ToString()}", ConsoleColor.Yellow);
                     con.Connect(ip, port);
 
                     var cache = new Server(con, System.Guid.NewGuid().ToString());
                     cache.NewMessage += NewMessage;
-                    ConsoleAssistance.WriteLine($"[Socket] Connect {ip}:{port.ToString()} successfully and its Guid is {cache.Guid}.");
+                    ConsoleAssistance.WriteLine($"[Network] Connect {ip}:{port.ToString()} successfully and its Guid is {cache.Guid}.");
                     serverList.Add(cache);
                 } catch (Exception) {
                     //abandon
-                    ConsoleAssistance.WriteLine($"[Socket] Fail to connect {ip}:{port.ToString()}.", ConsoleColor.Red);
+                    ConsoleAssistance.WriteLine($"[Network] Fail to connect {ip}:{port.ToString()}.", ConsoleColor.Red);
                 }
             });
         }

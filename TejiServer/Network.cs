@@ -48,10 +48,10 @@ namespace TejiServer {
 
             socket4.Listen(5);
             GetCaller(socket4);
-            ConsoleAssistance.WriteLine($"[Socket] Listening on port {General.serverConfig["ipv4Port"]} for ipv4 connection.");
+            ConsoleAssistance.WriteLine($"[Network] Listening on port {General.serverConfig["ipv4Port"]} for ipv4 connection.");
             socket6.Listen(5);
             GetCaller(socket6);
-            ConsoleAssistance.WriteLine($"[Socket] Listening on port {General.serverConfig["ipv6Port"]} for ipv6 connection.");
+            ConsoleAssistance.WriteLine($"[Network] Listening on port {General.serverConfig["ipv6Port"]} for ipv6 connection.");
 
             isListening = true;
         }
@@ -60,11 +60,25 @@ namespace TejiServer {
             if (!isListening) return;
 
             socket4.Close();
-            ConsoleAssistance.WriteLine("[Socket] Stop listening ipv4 connection.");
+            ConsoleAssistance.WriteLine("[Network] Stop listening ipv4 connection.");
             socket6.Close();
-            ConsoleAssistance.WriteLine("[Socket] Stop listening ipv6 connection.");
+            ConsoleAssistance.WriteLine("[Network] Stop listening ipv6 connection.");
 
             isListening = false;
+        }
+
+        //automatically stop listen followed by defined value
+        public void OnConnectionCountChanged() {
+            //seperate to passby dead lock
+
+            int count = int.Parse(General.serverConfig["maxUser"]);
+            bool test = true;
+            lock (lockClientList) {
+                test = clientList.Count >= count;
+            }
+
+            if (test) StopListen();
+            else StartListen();
         }
 
         void GetCaller(Socket s) {
@@ -74,7 +88,9 @@ namespace TejiServer {
                     var cache = new Client(client, System.Guid.NewGuid().ToString());
                     cache.NewMessage += NewMessage;
                     clientList.Add(cache);
-                    ConsoleAssistance.WriteLine($"[Socket] Accept {cache.EndPoint}'s connection and its Guid is {cache.Guid}.");
+                    ConsoleAssistance.WriteLine($"[Network] Accept {cache.EndPoint}'s connection and its Guid is {cache.Guid}.");
+
+                    OnConnectionCountChanged();
                 } catch (Exception) {
                     //jump
                     return;

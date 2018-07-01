@@ -11,6 +11,9 @@ namespace TejiServer {
             ConsoleAssistance.WriteLine("Init Config...");
             General.serverConfig = new ConfigManager(true);
 
+            ConsoleAssistance.WriteLine("Init Database...");
+            General.serverDatabase = new Database();
+
             ConsoleAssistance.WriteLine("Init Network...");
             General.serverNetwork = new Network();
             General.serverNetwork.StartListen();
@@ -37,6 +40,8 @@ namespace TejiServer {
 
             //close
             General.serverNetwork.Close();
+            General.serverDatabase.Save();
+            General.serverConfig.Save();
         }
     }
 }
