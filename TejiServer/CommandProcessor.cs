@@ -6,7 +6,7 @@ using TejiLib;
 namespace TejiServer {
     public class CommandProcessor {
 
-        public static void Process(string command) {
+        public static void Process(string command, string processObj) {
             var cache = CommandSplitter.SplitCommand(command);
 
             if (cache.Count == 0) {

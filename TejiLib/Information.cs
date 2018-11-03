@@ -19,7 +19,7 @@ namespace TejiLib {
         /// <summary>
         /// the version determine the transport
         /// </summary>
-        public static long TransportVersion { get { return 0; } }
+        public static int TransportVersion { get { return 0; } }
 
         /// <summary>
         /// get the app's work path
@@ -45,7 +45,11 @@ namespace TejiLib {
             }
         }
 
+        public static int TransportSign { get { return 6161; } }
 
+        public static long NowUNIXStamp {
+            get { return (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000; }
+        }
 
         /// <summary>
         /// get native iso 639-1 name

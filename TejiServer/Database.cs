@@ -5,172 +5,136 @@ using TejiLib;
 using Newtonsoft.Json;
 using System.IO;
 using System.Threading;
+//using Microsoft.EntityFrameworkCore.Sqlite;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace TejiServer {
 
     public class Database {
 
-        public Database() {
-            if (CheckDatabase()) Open();
-            else {
-                Generate();
-                Save();
-            }
+        public void Open() {
+            ConsoleAssistance.WriteLine("[Database] Reading database...");
+            CoreDbContext = new ServerDataContext();
+            ConsoleAssistance.WriteLine("[Database] Making sure all database is fine...");
+            CoreDbContext.Database.EnsureCreated();
+
+            ConsoleAssistance.WriteLine("[Database] Read database successfully.");
 
             //start a thread for saving database
-            var td = new Thread(() => {
+            databaseSavingTd = new Thread(() => {
                 Thread.Sleep(1000 * 60 * 10);
-                Save();
+                lock (lockCoreDbContext) {
+                    CoreDbContext.SaveChanges();
+                }
+                ConsoleAssistance.WriteLine("[Database] Save database successfully.");
             });
-            td.IsBackground = true;
-            td.Start();
+            databaseSavingTd.IsBackground = true;
+            databaseSavingTd.Start();
         }
 
-        bool CheckDatabase() {
-            if (!System.IO.File.Exists(Information.WorkPath.Enter("user.dat").Path())) return false;
-            if (!System.IO.File.Exists(Information.WorkPath.Enter("room.dat").Path())) return false;
-            if (!System.IO.File.Exists(Information.WorkPath.Enter("ban.dat").Path())) return false;
-            if (!System.IO.File.Exists(Information.WorkPath.Enter("emotion.dat").Path())) return false;
-            return true;
+        public void Close() {
+            try {
+                databaseSavingTd.Abort();
+            } catch (Exception) {
+                //pass
+            }
+            lock (lockCoreDbContext) {
+                CoreDbContext.SaveChanges();
+            }
+            ConsoleAssistance.WriteLine("[Database] Save database successfully.");
+            CoreDbContext.Dispose();
         }
 
-        void Open() {
-            ConsoleAssistance.WriteLine("[Database] Reading all database...");
-
-            var file = new StreamReader(Information.WorkPath.Enter("user.dat").Path(), Information.UniversalEncoding);
-            lock (lockUserDatabase) {
-                userDatabase = JsonConvert.DeserializeObject<Dictionary<string, UserDatabaseItem>>(file.ReadToEnd());
-            }
-            file.Close();
-            file.Dispose();
-
-            file = new StreamReader(Information.WorkPath.Enter("room.dat").Path(), Information.UniversalEncoding);
-            lock (lockUserDatabase) {
-                roomDatabase = JsonConvert.DeserializeObject<Dictionary<string, RoomDatabaseItem>>(file.ReadToEnd());
-            }
-            file.Close();
-            file.Dispose();
-
-            file = new StreamReader(Information.WorkPath.Enter("ban.dat").Path(), Information.UniversalEncoding);
-            lock (lockUserDatabase) {
-                banDatabase = JsonConvert.DeserializeObject<Dictionary<string, BanDatabaseItem>>(file.ReadToEnd());
-            }
-            file.Close();
-            file.Dispose();
-
-            file = new StreamReader(Information.WorkPath.Enter("emotion.dat").Path(), Information.UniversalEncoding);
-            lock (lockUserDatabase) {
-                emotionDatabase = JsonConvert.DeserializeObject<Dictionary<string, EmotionDatabaseItem>>(file.ReadToEnd());
-            }
-            file.Close();
-            file.Dispose();
-
-            ConsoleAssistance.WriteLine("[Database] Read all database successfully.");
-        }
-
-        void Generate() {
-            ConsoleAssistance.WriteLine("[Database] Generating all database...");
-            userDatabase.Clear();
-            roomDatabase.Clear();
-            banDatabase.Clear();
-            emotionDatabase.Clear();
-            ConsoleAssistance.WriteLine("[Database] Generate all database successfully.");
-        }
-
-        public void Save() {
-            ConsoleAssistance.WriteLine("[Database] Saving all database...");
-
-            var file = new StreamWriter(Information.WorkPath.Enter("user.dat").Path(), false, Information.UniversalEncoding);
-            lock (lockUserDatabase) {
-                file.Write(JsonConvert.SerializeObject(userDatabase));
-            }
-            file.Close();
-            file.Dispose();
-
-            file = new StreamWriter(Information.WorkPath.Enter("room.dat").Path(), false, Information.UniversalEncoding);
-            lock (lockUserDatabase) {
-                file.Write(JsonConvert.SerializeObject(roomDatabase));
-            }
-            file.Close();
-            file.Dispose();
-
-            file = new StreamWriter(Information.WorkPath.Enter("ban.dat").Path(), false, Information.UniversalEncoding);
-            lock (lockUserDatabase) {
-                file.Write(JsonConvert.SerializeObject(banDatabase));
-            }
-            file.Close();
-            file.Dispose();
-
-            file = new StreamWriter(Information.WorkPath.Enter("emotion.dat").Path(), false, Information.UniversalEncoding);
-            lock (lockUserDatabase) {
-                file.Write(JsonConvert.SerializeObject(emotionDatabase));
-            }
-            file.Close();
-            file.Dispose();
-
-            ConsoleAssistance.WriteLine("[Database] Save all database successfully.");
-        }
+        ServerDataContext CoreDbContext;
+        object lockCoreDbContext = new object();
+        Thread databaseSavingTd;
 
         //todo:finish database operation
+
         #region user
 
-        object lockUserDatabase = new Object();
-        Dictionary<string, UserDatabaseItem> userDatabase = new Dictionary<string, UserDatabaseItem>();
-
+        public (bool isOK, string message, byte[] salt1, byte[] salt2) GetSalt(string user) {
+            lock (lockCoreDbContext) {
+                var res = (from item in CoreDbContext.user
+                           where item.name == user
+                           select item).ToList();
+                if (!res.Any()) return (false, "No matched name", default(byte[]), default(byte[]));
+                return (true, "", Convert.FromBase64String(res[0].salt1), Convert.FromBase64String(res[0].salt2));
+            }
+        }
 
         #endregion
 
         #region room
-
-        object lockRoomDatabase = new Object();
-        Dictionary<string, RoomDatabaseItem> roomDatabase = new Dictionary<string, RoomDatabaseItem>();
 
 
         #endregion
 
         #region ban
 
-        object lockBanDatabase = new Object();
-        Dictionary<string, BanDatabaseItem> banDatabase = new Dictionary<string, BanDatabaseItem>();
-
 
         #endregion
 
         #region emotion
 
-        object lockEmotionDatabase = new Object();
-        Dictionary<string, EmotionDatabaseItem> emotionDatabase = new Dictionary<string, EmotionDatabaseItem>();
-
-
         #endregion
 
     }
 
-    public struct UserDatabaseItem {
-        public string name;
-        public string nickname;
-        public bool isAdmin;
-        public string avatarGuid;
-        public string salt1;
-        public string salt2;
-        public string saltHash;
+
+    public class ServerDataContext : DbContext {
+        public DbSet<UserDatabaseItem> user { get; set; }
+        public DbSet<RoomDatabaseItem> room { get; set; }
+        public DbSet<BanDatabaseItem> ban { get; set; }
+        public DbSet<EmotionDatabaseItem> emotion { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+            optionsBuilder.UseSqlite($"Data Source = {Information.WorkPath.Enter("server.db").Path()};");
+        }
     }
 
-    public struct RoomDatabaseItem {
-        public string name;
-        public string type;
-        public string password;
-        public string host;
-        public string users;
+    [Table("user")]
+    public class UserDatabaseItem {
+        [Key]
+        public string name { get; set; }
+
+        public string nickname { get; set; }
+        public bool isAdmin { get; set; }
+        public string avatarGuid { get; set; }
+        public string salt1 { get; set; }
+        public string salt2 { get; set; }
+        public string saltHash { get; set; }
     }
 
-    public struct BanDatabaseItem {
-        public string value;
-        public string type;
+    [Table("room")]
+    public class RoomDatabaseItem {
+        [Key]
+        public string name { get; set; }
+
+        public int permission { get; set; }
+        public string password { get; set; }
+        public string host { get; set; }
+        public string users { get; set; }
     }
 
-    public struct EmotionDatabaseItem {
-        public string name;
-        public string emotionGuid;
+    [Table("ban")]
+    public class BanDatabaseItem {
+        [Key]
+        public string value { get; set; }
+
+        public string type { get; set; }
     }
+
+    [Table("emotion")]
+    public class EmotionDatabaseItem {
+        [Key]
+        public string name { get; set; }
+
+        public string emotionGuid { get; set; }
+    }
+
 }

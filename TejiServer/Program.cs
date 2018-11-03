@@ -13,7 +13,8 @@ namespace TejiServer {
 
             ConsoleAssistance.WriteLine("Init Database...");
             General.serverDatabase = new Database();
-
+            General.serverDatabase.Open();
+            
             ConsoleAssistance.WriteLine("Init Network...");
             General.serverNetwork = new Network();
             General.serverNetwork.StartListen();
@@ -29,18 +30,18 @@ namespace TejiServer {
                     //todo:finish display
                     ConsoleAssistance.Write("TejiServer", ConsoleColor.Green);
                     ConsoleAssistance.Write(">", ConsoleColor.Yellow);
-                    
+
                     command = Console.ReadLine();
                     //todo:process command
                     if (command == "exit") break;
-                    else CommandProcessor.Process(command);
+                    else CommandProcessor.Process(command, "");
                     General.IsInputing = false;
                 }
             }
 
             //close
             General.serverNetwork.Close();
-            General.serverDatabase.Save();
+            General.serverDatabase.Close();
             General.serverConfig.Save();
         }
     }

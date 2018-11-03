@@ -7,6 +7,7 @@ ehthumbs.db
 Desktop.ini
 
 *.dat
+*.db
 
 #ignore app's config
 teji.cfg
