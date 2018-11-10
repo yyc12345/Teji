@@ -6,19 +6,17 @@ using TejiLib;
 namespace TejiServer {
     public class CommandProcessor {
 
-        public static void Process(string command, string processObj) {
+        public static string Process(Client invoker, string command) {
             var cache = CommandSplitter.SplitCommand(command);
 
             if (cache.Count == 0) {
-                ConsoleAssistance.WriteLine("Error command", ConsoleColor.Red);
-                return;
+                return "Error command";
             }
 
             switch (cache[0]) {
                 //todo:finish command
                 default:
-                    ConsoleAssistance.WriteLine("No such command.", ConsoleColor.Red);
-                    break;
+                    return "No such command.";
             }
 
         }

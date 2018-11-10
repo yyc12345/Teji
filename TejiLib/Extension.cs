@@ -96,6 +96,37 @@ namespace TejiLib {
 
     //}
 
+    public static class ByteArrayAndString {
+
+        public static string ConvertToString(this byte[] bytes) {
+            string returnStr = "";
+            if (bytes != null) {
+                for (int i = 0; i < bytes.Length; i++) {
+                    returnStr += bytes[i].ToString("X2");
+                }
+            }
+            return returnStr.ToLower();
+        }
+
+        public static byte[] ConvertToByte(this string hexStr) {
+            hexStr = hexStr.ToLower();
+            var count = hexStr.Length;
+
+            if (count % 2 == 1) {
+                throw new ArgumentException("Invalid length of bytes:" + count);
+            }
+
+            var byteCount = count / 2;
+            var result = new byte[byteCount];
+            for (int ii = 0; ii < byteCount; ++ii) {
+                var tempBytes = Byte.Parse(hexStr.Substring(2 * ii, 2), System.Globalization.NumberStyles.HexNumber);
+                result[ii] = tempBytes;
+            }
+
+            return result;
+        }
+    }
+
     public class FilePathBuilder {
 
         private Stack<string> pathStack;

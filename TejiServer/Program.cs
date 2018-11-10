@@ -14,7 +14,10 @@ namespace TejiServer {
             ConsoleAssistance.WriteLine("Init Database...");
             General.serverDatabase = new Database();
             General.serverDatabase.Open();
-            
+
+            ConsoleAssistance.WriteLine("Init File Pool...");
+            General.FilePoolManager = new FilePool();
+
             ConsoleAssistance.WriteLine("Init Network...");
             General.serverNetwork = new Network();
             General.serverNetwork.StartListen();
@@ -34,7 +37,7 @@ namespace TejiServer {
                     command = Console.ReadLine();
                     //todo:process command
                     if (command == "exit") break;
-                    else CommandProcessor.Process(command, "");
+                    else CommandProcessor.Process(null, command);
                     General.IsInputing = false;
                 }
             }

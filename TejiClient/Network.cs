@@ -11,9 +11,7 @@ namespace TejiClient {
     public class Network {
 
         public Network() {
-            tdServerListCleaner = new Thread(ServerListCleaner);
-            tdServerListCleaner.IsBackground = true;
-            tdServerListCleaner.Start();
+
         }
 
         public void Close() {
@@ -29,11 +27,7 @@ namespace TejiClient {
 
         public event Action<string> ServerMessage;
 
-        private void OnServerMessage(string msg) {
-            ServerMessage?.Invoke(msg);
-        }
-
-        public void ConnectServer(string ip, int port, bool isIpv6) {
+        public void ConnectServer(string ip, int port, bool isIpv6, string username, string password) {
             Task.Run(() => {
                 try {
                     Socket con;
@@ -43,8 +37,14 @@ namespace TejiClient {
                     ConsoleAssistance.WriteLine($"[Network] Connecting {ip}:{port.ToString()}", ConsoleColor.Yellow);
                     con.Connect(ip, port);
 
-                    var cache = new Server(con, System.Guid.NewGuid().ToString());
-                    cache.NewMessage += NewMessage;
+                    var cache = new Server(con, System.Guid.NewGuid().ToString(), username, password);
+                    cache.TextMessage += this.TextMessageHandle;
+                    cache.ResponseMessage += this.ResponseMessageHandle;
+                    cache.RequestMessage += this.RequestMessageHandle;
+                    cache.FileHeadMessage += this.FileHeadMessageHandle;
+                    cache.FileBodyMessage += this.FileBodyMessagehandle;
+                    cache.E2EMessage += this.E2EMessagehandle;
+                    cache.RequestRemove += this.RequestRemoveHandle;
                     ConsoleAssistance.WriteLine($"[Network] Connect {ip}:{port.ToString()} successfully and its Guid is {cache.Guid}.");
                     serverList.Add(cache);
                 } catch (Exception) {
@@ -64,37 +64,43 @@ namespace TejiClient {
             });
         }
 
-        public void SendMessage(string words,string guid) {
-            //todo: test mode
-            Task.Run(() => {
-                lock (lockServerList) {
-                    foreach (var item in serverList) {
-                        item.SendData(words);
-                    }
-                }
-            });
-        }
-
         #endregion
 
         object lockServerList = new object();
         List<Server> serverList = new List<Server>();
 
-        void NewMessage(string str) {
-            OnServerMessage(str);
+        void TextMessageHandle(Server server, string room, string user, long time_stamp, string words) {
+
         }
 
-        Thread tdServerListCleaner;
-        void ServerListCleaner() {
-            Thread.Sleep(1000 * 60 * 1);
+        void ResponseMessageHandle(Server server, string words) {
 
+        }
+
+        void RequestMessageHandle(Server server, string guid) {
+
+        }
+
+        void BroadcastMessageHandle(Server server, string guid) {
+
+        }
+
+        void FileHeadMessageHandle(Server server, string guid, int section_count, int section_length, int last_section_length) {
+
+        }
+
+        void FileBodyMessagehandle(Server server, string guid, int index, byte[] data) {
+
+        }
+
+        void E2EMessagehandle(Server server, string from, byte[] data) {
+
+        }
+
+        void RequestRemoveHandle(Server server) {
             lock (lockServerList) {
-                foreach (var item in serverList) {
-                    if (item.AbandonedServer) serverList.Remove(item);
-                }
+                serverList.Remove(server);
             }
-
         }
-
     }
 }

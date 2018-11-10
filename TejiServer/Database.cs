@@ -67,6 +67,16 @@ namespace TejiServer {
             }
         }
 
+        public (bool isOK, bool res) IsAdmin(string user) {
+            lock (lockCoreDbContext) {
+                var res = (from item in CoreDbContext.user
+                           where item.name == user
+                           select item).ToList();
+                if (!res.Any()) return (false, default(bool));
+                return (true, res[0].isAdmin);
+            }
+        }
+
         #endregion
 
         #region room

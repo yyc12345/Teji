@@ -5,17 +5,107 @@ using System.Text;
 namespace TejiLib {
 
     public enum MessageType : byte {
+        /*
+        client
+
+        string name
+        */
         LoginPhase1,
+        /*
+        server
+
+        byte[128] salt1
+        byte[128] salt2
+        */
         LoginPhase2,
+        /*
+        client 
+
+        byte[] password_encrypted
+        */
         LoginPhase3,
+        /*
+        server
+
+        byte[1] 61_sign
+        */
         LoginPhase4,
-        Text,
+        /*
+        client
+
+        int32 room_length
+        string room
+        string words
+        */
+        TextIn,
+        /*
+        server
+
+        int32 room_length
+        string room
+        int32 user_length
+        string user
+        int64 time_stamp_utc
+        string words
+        */
+        TextOut,
+        /*
+        client
+
+        string commands
+        */
         Command,
+        /*
+        server
+
+        string response_words
+        */
         Response,
+        /*
+        server
+
+        string words
+        */
         Broadcast,
+        /*
+        server / client
+
+        byte[256] guid
+        */
+        Request,
+        /*
+        client / server
+
+        byte[256] guid
+        int32 section_count
+        int32 section_length
+        int32 last_section_length
+        */
         FileHead,
+        /*
+        client / server
+
+        byte[256] guid
+        int32 section
+        byte[] data
+        */
         FileBody,
-        E2E
+        /*
+        client
+
+        int32 to_length
+        string to
+        byte[] data
+        */
+        E2EIn,
+        /*
+        server
+
+        int32 from_length
+        string from
+        byte[] data
+        */
+        E2EOut
     }
 
     [Flags]

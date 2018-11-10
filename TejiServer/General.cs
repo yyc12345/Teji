@@ -12,6 +12,8 @@ namespace TejiServer {
 
         public static Network serverNetwork;
 
+        public static FilePool FilePoolManager;
+
         public static bool IsInputing;
     }
 }

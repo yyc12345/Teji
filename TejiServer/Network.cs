@@ -12,9 +12,7 @@ namespace TejiServer {
     public class Network {
 
         public Network() {
-            tdClientListCleaner = new Thread(ClientListCleaner);
-            tdClientListCleaner.IsBackground = true;
-            tdClientListCleaner.Start();
+            
         }
 
         public void Close() {
@@ -86,7 +84,15 @@ namespace TejiServer {
                 try {
                     Socket client = s.Accept();
                     var cache = new Client(client, System.Guid.NewGuid().ToString());
-                    cache.NewMessage += NewMessage;
+                    //add event handle
+                    cache.TextMessage += this.TextMessageHandle;
+                    cache.CommandMessage += this.CommandMessageHandle;
+                    cache.RequestMessage += this.RequestMessageHandle;
+                    cache.FileHeadMessage += this.FileHeadMessageHandle;
+                    cache.FileBodyMessage += this.FileBodyMessagehandle;
+                    cache.E2EMessage += this.E2EMessagehandle;
+                    cache.RequestRemove += this.RequestRemoveHandle;
+                    //add item
                     clientList.Add(cache);
                     ConsoleAssistance.WriteLine($"[Network] Accept {cache.EndPoint}'s connection and its Guid is {cache.Guid}.");
 
@@ -108,24 +114,34 @@ namespace TejiServer {
         object lockClientList = new object();
         List<Client> clientList = new List<Client>();
 
-        void NewMessage(string str) {
-            lock (lockClientList) {
-                foreach (var item in clientList) {
-                    item.SendData(str);
-                }
-            }
+        void TextMessageHandle(Client client, string room, string msg) {
+
         }
 
-        Thread tdClientListCleaner;
-        void ClientListCleaner() {
-            Thread.Sleep(1000 * 60 * 1);
+        void CommandMessageHandle(Client client,string command) {
+            CommandProcessor.Process(client, command);
+        }
 
+        void RequestMessageHandle(Client client, string guid) {
+
+        }
+
+        void FileHeadMessageHandle(Client client, string guid, int section_count, int section_length, int last_section_length) {
+
+        }
+
+        void FileBodyMessagehandle(Client client,string guid, int index, byte[] data) {
+
+        }
+
+        void E2EMessagehandle(Client client, string to, byte[] data) {
+
+        }
+
+        void RequestRemoveHandle(Client client) {
             lock (lockClientList) {
-                foreach (var item in clientList) {
-                    if (item.AbandonedClient) clientList.Remove(item);
-                }
+                clientList.Remove(client);
             }
-
         }
 
 

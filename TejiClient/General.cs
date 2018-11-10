@@ -12,6 +12,8 @@ namespace TejiClient {
 
         public static Network clientNetwork;
 
+        public static FilePool FilePoolManager;
+
         public static bool IsInputing;
     }
 }
